@@ -1,26 +1,21 @@
 #include <Arduino.h>
 #include "helpers.h"
 
-#include "Blink.h"
+#include "TrafficLight.h"
 
-Blink red(8, 3000, 4500, true);
-Blink amber(4, 1500, 3000);
-Blink green(2, 3000, 4500);
+TrafficLight trafficLight(8, 4, 2, 50000, 25000, 60000);
 
 void setup()
 {
   // put your setup code here, to run once:
   turnOffBuiltInLED();
+  Serial.begin(9600);
 
-  red.Setup();
-  amber.Setup();
-  green.Setup();
+  trafficLight.Setup();
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly:
-  red.Loop();
-  amber.Loop();
-  green.Loop();
+  trafficLight.Loop();
 }
