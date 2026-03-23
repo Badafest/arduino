@@ -1,18 +1,20 @@
 #include <Arduino.h>
+#include "helpers.h"
 
-// put function declarations here:
-int myFunction(int, int);
+#include "Blink.h"
 
-void setup() {
+Blink blink(8, 1000, 500);
+
+void setup()
+{
   // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  turnOffBuiltInLED();
+
+  blink.Setup();
 }
 
-void loop() {
+void loop()
+{
   // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  blink.Loop();
 }
