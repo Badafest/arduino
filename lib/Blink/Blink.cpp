@@ -14,15 +14,22 @@ Blink::Blink(
 void Blink::Setup()
 {
     pinMode(_ledPin, OUTPUT);
-    _current_state = _startHigh ? HIGH : LOW;
-    digitalWrite(_ledPin, _current_state);
+    _currentState = _startHigh ? HIGH : LOW;
+    digitalWrite(_ledPin, _currentState);
+    _lastTimestamp = millis();
 }
 
 void Blink::Loop()
 {
-    delay(_current_state == LOW ? _timeLowMs : _timeHighMs);
-    _current_state = _current_state == LOW ? HIGH : LOW;
-    digitalWrite(_ledPin, _current_state);
+    long waitTime = _currentState == LOW ? _timeLowMs : _timeHighMs;
+    unsigned long currentTimestamp = millis();
+    if (currentTimestamp - _lastTimestamp < waitTime)
+    {
+        return;
+    }
+    _currentState = _currentState == LOW ? HIGH : LOW;
+    digitalWrite(_ledPin, _currentState);
+    _lastTimestamp = currentTimestamp;
 }
 
 Blink::~Blink()

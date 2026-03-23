@@ -11,7 +11,8 @@ private:
     long _timeHighMs;
     long _timeLowMs;
     bool _startHigh;
-    uint8_t _current_state;
+    uint8_t _currentState;
+    unsigned long _lastTimestamp;
 
 public:
     Blink(

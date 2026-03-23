@@ -3,18 +3,24 @@
 
 #include "Blink.h"
 
-Blink blink(8, 1000, 500);
+Blink red(8, 3000, 4500, true);
+Blink amber(4, 1500, 3000);
+Blink green(2, 3000, 4500);
 
 void setup()
 {
   // put your setup code here, to run once:
   turnOffBuiltInLED();
 
-  blink.Setup();
+  red.Setup();
+  amber.Setup();
+  green.Setup();
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly:
-  blink.Loop();
+  red.Loop();
+  amber.Loop();
+  green.Loop();
 }
