@@ -1,4 +1,5 @@
 #include "TrafficLight.h"
+#include "LedControl.h"
 
 TrafficLight::TrafficLight(
     uint8_t redPin,
@@ -6,12 +7,17 @@ TrafficLight::TrafficLight(
     uint8_t greenPin,
     unsigned long redTime,
     unsigned long amberTime,
-    unsigned long greenTime) : _redPin(redPin),
-                               _amberPin(amberPin),
-                               _greenPin(greenPin),
-                               _redTime(redTime),
-                               _amberTime(amberTime),
-                               _greenTime(greenTime)
+    unsigned long greenTime,
+    uint8_t displayDIN,
+    uint8_t displayCLK,
+    uint8_t displayCS,
+    uint8_t displayMaxDevice) : _redPin(redPin),
+                                _amberPin(amberPin),
+                                _greenPin(greenPin),
+                                _redTime(redTime),
+                                _amberTime(amberTime),
+                                _greenTime(greenTime),
+                                _ledControl(displayDIN, displayCLK, displayCS, displayMaxDevice)
 {
 }
 
@@ -20,6 +26,13 @@ void TrafficLight::Setup()
     pinMode(_redPin, OUTPUT);
     pinMode(_amberPin, OUTPUT);
     pinMode(_greenPin, OUTPUT);
+
+    _ledControl.shutdown(0, false);
+    _ledControl.setIntensity(0, 2);
+
+    // test the display
+    _ledControl.setLed(0, 0, 0, HIGH);
+    _ledControl.clearDisplay(0);
 
     _nextLight = TRAFFIC_LIGHT_RED;
     SwitchLight();
@@ -38,6 +51,11 @@ void TrafficLight::Loop()
 
     Serial.print("WAIT: ");
     Serial.println(_remainingSeconds);
+
+    // display remaining seconds in the display
+    _ledControl.clearDisplay(0);
+    DisplayDigit((_remainingSeconds / 10) % 10, 0);
+    DisplayDigit(_remainingSeconds % 10, 1);
 
     if (_remainingSeconds > 0)
     {
@@ -81,6 +99,29 @@ void TrafficLight::SwitchLight()
     _currentLight = newCurrentLight;
     _lastSwitchedAt = millis();
     _remainingSeconds = round(_waitTime / 1000);
+}
+
+void TrafficLight::DisplayDigit(uint8_t digit, uint8_t place)
+{
+    // start from second row
+    uint8_t row = 1;
+    // start from second column + offset based on place
+    // one place takes 3 columns
+    uint8_t col = 1 + place * 4;
+
+    for (uint8_t i = 0; i < 13; i++)
+    {
+        int8_t ledIndex = _digitLeds[digit][i];
+        if (ledIndex < 0)
+        {
+            break;
+        }
+
+        uint8_t _row = row + _digitLeds[digit][i] / 3;
+        uint8_t _col = col + _digitLeds[digit][i] % 3;
+
+        _ledControl.setLed(0, _row, _col, HIGH);
+    }
 }
 
 TrafficLight::~TrafficLight()
