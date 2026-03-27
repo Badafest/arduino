@@ -1,16 +1,13 @@
 #include <Arduino.h>
 #include "helpers.h"
 
-const uint8_t ledPin = 9;
-bool ledOn = false;
-int inInt = 0;
+uint8_t potPin = A0;
+float voltage = 0;
 
 void setup()
 {
   // put your setup code here, to run once:
   turnOffBuiltInLED();
-
-  pinMode(ledPin, OUTPUT);
 
   Serial.begin(9600);
   Serial.println("UNO is ready!");
@@ -19,13 +16,15 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly:
-  if (!Serial.available())
-  {
-    return;
-  }
 
-  inInt = Serial.parseInt();
-  Serial.print("UNO received:");
-  Serial.println(inInt);
-  analogWrite(ledPin, constrain(inInt, 0, 255));
+  int adcValue = analogRead(potPin);
+  voltage = adcValue * (5.0 / 1023.0);
+
+  Serial.print("ADC Value:");
+  Serial.println(adcValue);
+
+  Serial.print("Voltage:");
+  Serial.println(voltage, 3);
+
+  delay(1000);
 }
