@@ -1,32 +1,56 @@
 #include <Arduino.h>
 #include "helpers.h"
 
-#include "TrafficLight.h"
+const uint8_t buttonPin = 12;
+const uint8_t ledPin = 9;
 
-TrafficLight trafficLight(
-    2,     // red pin
-    6,     // amber pin
-    10,    // green pin
-    30000, // red time (ms)
-    5000,  // amber time (ms)
-    20000, // green time (ms)
-    12,    // display data in pin
-    4,     // display clock pin
-    8,     // display CS pin
-    1      // display max device
-);
+bool ledOn = false;
+
+char inChar;
+int counter = 0;
 
 void setup()
 {
   // put your setup code here, to run once:
   turnOffBuiltInLED();
-  Serial.begin(9600);
 
-  trafficLight.Setup();
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(ledPin, OUTPUT);
+
+  Serial.begin(9600);
+  Serial.println("UNO is ready!");
 }
 
 void loop()
 {
   // put your main code here, to run repeatedly:
-  trafficLight.Loop();
+  digitalWrite(ledPin, ledOn ? HIGH : LOW);
+
+  uint8_t buttonUp = digitalRead(buttonPin);
+  delay(150);
+  if (digitalRead(buttonPin) != buttonUp)
+  {
+    ledOn = !ledOn;
+  }
+}
+
+void serialEvent()
+{
+  if (!Serial.available())
+  {
+    return;
+  }
+
+  inChar = Serial.read();
+  Serial.print("UNO received:");
+  Serial.println(inChar);
+
+  if (inChar == '1')
+  {
+    ledOn = true;
+  }
+  else if (inChar == '0')
+  {
+    ledOn = false;
+  }
 }
