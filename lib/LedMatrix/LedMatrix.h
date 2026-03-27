@@ -35,6 +35,7 @@ public:
     void init();
     void clear();
     void displayDigit(uint8_t digit, uint8_t place);
+    void displayDecimal(uint8_t place);
     ~LedMatrix();
 };
 

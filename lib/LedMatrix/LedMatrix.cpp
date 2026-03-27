@@ -46,6 +46,11 @@ void LedMatrix::displayDigit(uint8_t digit, uint8_t place)
     }
 }
 
+void LedMatrix::displayDecimal(uint8_t place)
+{
+    _ledControl.setLed(0, 5, 4 + place, HIGH);
+}
+
 LedMatrix::~LedMatrix()
 {
 }
